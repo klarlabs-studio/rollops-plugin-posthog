@@ -17,11 +17,11 @@ func TestApplyFlag_ResolvesAndPatches(t *testing.T) {
 	srv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		switch r.Method {
 		case http.MethodGet:
-			json.NewEncoder(w).Encode(flagList{Results: []flag{{ID: 7, Key: "checkout"}}})
+			_ = json.NewEncoder(w).Encode(flagList{Results: []flag{{ID: 7, Key: "checkout"}}})
 		case http.MethodPatch:
 			patchedPath = r.URL.Path
 			b, _ := io.ReadAll(r.Body)
-			json.Unmarshal(b, &patchBody)
+			_ = json.Unmarshal(b, &patchBody)
 			w.WriteHeader(200)
 		}
 	}))
@@ -55,13 +55,13 @@ func TestApplyFlag_Paginates(t *testing.T) {
 		page++
 		if page == 1 {
 			// First page lacks the flag and points to a second page.
-			json.NewEncoder(w).Encode(map[string]any{
+			_ = json.NewEncoder(w).Encode(map[string]any{
 				"results": []flag{{ID: 1, Key: "other"}},
 				"next":    "http://" + r.Host + "/api/projects/42/feature_flags/?page=2",
 			})
 			return
 		}
-		json.NewEncoder(w).Encode(flagList{Results: []flag{{ID: 9, Key: "checkout"}}})
+		_ = json.NewEncoder(w).Encode(flagList{Results: []flag{{ID: 9, Key: "checkout"}}})
 	}))
 	defer srv.Close()
 
@@ -76,7 +76,7 @@ func TestApplyFlag_Paginates(t *testing.T) {
 
 func TestApplyFlag_NotFound(t *testing.T) {
 	srv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, _ *http.Request) {
-		json.NewEncoder(w).Encode(flagList{Results: []flag{{ID: 1, Key: "other"}}})
+		_ = json.NewEncoder(w).Encode(flagList{Results: []flag{{ID: 1, Key: "other"}}})
 	}))
 	defer srv.Close()
 	p := Provider{BaseURL: srv.URL, Token: "k", ProjectID: "42", HTTP: srv.Client()}
