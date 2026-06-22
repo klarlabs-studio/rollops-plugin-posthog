@@ -14,7 +14,7 @@ func fakePostHog(t *testing.T) *httptest.Server {
 	t.Helper()
 	srv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		if r.Method == http.MethodGet {
-			w.Write([]byte(`{"results":[{"id":7,"key":"checkout"}]}`))
+			_, _ = w.Write([]byte(`{"results":[{"id":7,"key":"checkout"}]}`))
 			return
 		}
 		w.WriteHeader(http.StatusOK)
